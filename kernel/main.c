@@ -240,6 +240,7 @@ void shabby_shell(const char * tty_name)
 	assert(fd_stdout == 1);
 
 	char rdbuf[128];
+	clear();
 
 	while (1) {
 		write(1, "$ ", 2);
@@ -267,13 +268,18 @@ void shabby_shell(const char * tty_name)
 		} while(ch);
 		argv[argc] = 0;
 
+		if (buildin_command(argv)) {
+			continue;
+		}
+
 		int fd = open(argv[0], O_RDWR);
 		if (fd == -1) {
-			if (rdbuf[0]) {
-				write(1, "{", 1);
-				write(1, rdbuf, r);
-				write(1, "}\n", 2);
-			}
+			printl("Command not found!\n");
+			// if (rdbuf[0]) {
+			// 	write(1, "{", 1);
+			// 	write(1, rdbuf, r);
+			// 	write(1, "}\n", 2);
+			// }
 		}
 		else {
 			close(fd);
@@ -290,6 +296,14 @@ void shabby_shell(const char * tty_name)
 
 	close(1);
 	close(0);
+}
+
+int buildin_command(char **argv) {
+	if (!strcmp(argv[0], "clear")) {
+		clear();
+		return 1;
+	}
+	return 0;
 }
 
 /*****************************************************************************
@@ -379,3 +393,10 @@ PUBLIC void panic(const char *fmt, ...)
 	__asm__ __volatile__("ud2");
 }
 
+void clear() {
+	int i;
+	for (i=0;i<25;++i) printl("\n");
+	// clear_screen(0, console_table[current_console].cursor);
+    // console_table[current_console].crtc_start = console_table[current_console].orig;
+	// console_table[current_console].cursor = console_table[current_console].orig;
+}
