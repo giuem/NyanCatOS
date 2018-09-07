@@ -4,7 +4,7 @@ int main(int argc, char const *argv[])
 {
     if (argc < 2)
     {
-        printf("Usage: edit [filename]\n");
+        printf("Usage: edit <filename>\n");
         return 1;
     }
     char const *filename = argv[1];

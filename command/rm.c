@@ -3,7 +3,7 @@
 int main(int argc, char const *argv[])
 {
     if (argc < 2) {
-        printf("rm [file1] [file2]");
+        printf("rm <file1> [file2] ...");
         return 1;
     }
 

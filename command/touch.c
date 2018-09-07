@@ -3,7 +3,7 @@
 int main(int argc, char const *argv[])
 {
     if (argc < 2) {
-        printf("Usage: touch [file1] [file2] ...\n");
+        printf("Usage: touch <file1> [file2] ...\n");
         return -1;
     }
     int i;
