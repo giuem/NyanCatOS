@@ -224,6 +224,14 @@ void untar(const char * filename)
 	printf(" done]\n");
 }
 
+void clear() {
+	int i;
+	for (i=0;i<25;++i) printl("\n");
+	// clear_screen(0, console_table[current_console].cursor);
+    // console_table[current_console].crtc_start = console_table[current_console].orig;
+	// console_table[current_console].cursor = console_table[current_console].orig;
+}
+
 /*****************************************************************************
  *                                shabby_shell
  *****************************************************************************/
@@ -391,12 +399,4 @@ PUBLIC void panic(const char *fmt, ...)
 
 	/* should never arrive here */
 	__asm__ __volatile__("ud2");
-}
-
-void clear() {
-	int i;
-	for (i=0;i<25;++i) printl("\n");
-	// clear_screen(0, console_table[current_console].cursor);
-    // console_table[current_console].crtc_start = console_table[current_console].orig;
-	// console_table[current_console].cursor = console_table[current_console].orig;
 }

@@ -132,6 +132,34 @@ PUBLIC int do_open()
 	return fd;
 }
 
+PUBLIC int do_getdents() {
+	// int fd = fs_msg.FD;
+	int i, j, k;
+
+	struct inode * dir_inode = root_inode;
+
+	int dir_blk0_nr = dir_inode->i_start_sect;
+    int nr_dir_blks = (dir_inode->i_size + SECTOR_SIZE - 1) / SECTOR_SIZE;
+	int nr_dir_entries = dir_inode->i_size / DIR_ENTRY_SIZE;
+	int m = 0;
+	struct dir_entry * pde;
+
+	for (i = 0; i < nr_dir_blks; i++) {
+		RD_SECT(dir_inode->i_dev, dir_blk0_nr + i);
+		pde = (struct dir_entry *)fsbuf;
+		for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE; j++, pde++) {
+			if (pde->inode_nr > 0) {
+				printl("%d %s\n", pde->inode_nr, pde->name);
+			}
+            if (++m >= nr_dir_entries){
+                break;
+			}
+		}
+		if (m > nr_dir_entries) break;
+	}
+	return 0;
+}
+
 /*****************************************************************************
  *                                create_file
  *****************************************************************************/
