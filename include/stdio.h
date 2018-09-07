@@ -123,9 +123,6 @@ PUBLIC int	write		(int fd, const void *buf, int count);
 /* lib/unlink.c */
 PUBLIC	int	unlink		(const char *pathname);
 
-/* lib/get_dents.c */
-PUBLIC int getdents		(int fd);
-
 /* lib/getpid.c */
 PUBLIC int	getpid		();
 
@@ -149,5 +146,7 @@ PUBLIC int	stat		(const char *path, struct stat *buf);
 /* lib/syslog.c */
 PUBLIC	int	syslog		(const char *fmt, ...);
 
+/* lib/date.c */
+PUBLIC int date(struct time * t);
 
 #endif /* _ORANGES_STDIO_H_ */

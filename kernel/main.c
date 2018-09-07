@@ -232,6 +232,12 @@ void clear() {
 	// console_table[current_console].cursor = console_table[current_console].orig;
 }
 
+void test() {
+	struct time t;
+	date(&t);
+	printf("%d %d", t.year, t.month);
+}
+
 /*****************************************************************************
  *                                shabby_shell
  *****************************************************************************/
@@ -249,6 +255,7 @@ void shabby_shell(const char * tty_name)
 
 	char rdbuf[128];
 	clear();
+	test();
 
 	while (1) {
 		write(1, "$ ", 2);
