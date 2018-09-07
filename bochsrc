@@ -24,6 +24,9 @@ ata0-master: type=disk, path="80m.img", mode=flat, cylinders=162, heads=16, spt=
 # choose the boot disk.
 boot: a
 
+# set clock to real
+clock: sync=realtime, rtc_sync=1
+
 # where do we send log messages?
 # log: bochsout.txt
 

@@ -255,7 +255,6 @@ void shabby_shell(const char * tty_name)
 
 	char rdbuf[128];
 	clear();
-	test();
 
 	while (1) {
 		write(1, "$ ", 2);
