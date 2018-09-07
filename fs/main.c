@@ -71,9 +71,6 @@ PUBLIC void task_fs()
 		case EXIT:
 			fs_msg.RETVAL = fs_exit();
 			break;
-		case GET_DENTS:
-			fs_msg.RETVAL = do_getdents();
-			break;
 		/* case LSEEK: */
 		/* 	fs_msg.OFFSET = do_lseek(); */
 		/* 	break; */
@@ -94,7 +91,6 @@ PUBLIC void task_fs()
 		msg_name[WRITE]  = "WRITE";
 		msg_name[LSEEK]  = "LSEEK";
 		msg_name[UNLINK] = "UNLINK";
-		msg_name[GET_DENTS] = "GET_DENTS";
 		/* msg_name[FORK]   = "FORK"; */
 		/* msg_name[EXIT]   = "EXIT"; */
 		/* msg_name[STAT]   = "STAT"; */
@@ -105,7 +101,6 @@ PUBLIC void task_fs()
 			// 	      msg_name[msgtype], src);
 			//panic("");
 		case OPEN:
-		case GET_DENTS:
 		case CLOSE:
 		case READ:
 		case WRITE:
