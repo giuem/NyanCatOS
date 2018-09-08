@@ -160,9 +160,7 @@ PRIVATE struct inode * create_file(char * path, int flags)
 					 free_sect_nr);
 
 	new_dir_entry(dir_inode, newino->i_num, filename);
-	// need to test
-	new_dir_entry(newino, inode_nr, ".");
-	new_dir_entry(newino, dir_inode->i_num, "..");
+
 	return newino;
 }
 
