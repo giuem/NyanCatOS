@@ -33,7 +33,8 @@ int main(int argc, char const *argv[])
             if (stat(dirent.name, &st) < 0) {
                 printf("cannot stat %s\n", dirent.name);
             }
-            printf("%3d %7d %s%s\n", dirent.inode_nr, st.st_size,
+            if (dirent.inode_nr > 0)
+                printf("%3d %7d %s%s\n", dirent.inode_nr, st.st_size,
                     dirent.name, st.st_mode==I_DIRECTORY ? "/" : "");
         }
         break;
