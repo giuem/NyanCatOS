@@ -202,7 +202,9 @@ PRIVATE struct inode * create_dir(char * path, int flags)
 					 free_sect_nr, I_DIRECTORY);
 
 	new_dir_entry(dir_inode, newino->i_num, filename);
-
+	// need to test
+	new_dir_entry(newino, inode_nr, ".");
+	new_dir_entry(newino, dir_inode->i_num, "..");
 	return newino;
 }
 
