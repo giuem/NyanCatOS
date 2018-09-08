@@ -25,10 +25,9 @@
 #include "proto.h"
 
 PRIVATE struct inode * create_file(char * path, int flags);
-PRIVATE struct inode * create_dir(char * path, int flags);
 PRIVATE int alloc_imap_bit(int dev);
 PRIVATE int alloc_smap_bit(int dev, int nr_sects_to_alloc);
-PRIVATE struct inode * new_inode(int dev, int inode_nr, int start_sect, int i_mode);
+PRIVATE struct inode * new_inode(int dev, int inode_nr, int start_sect);
 PRIVATE void new_dir_entry(struct inode * dir_inode, int inode_nr, char * filename);
 
 /*****************************************************************************
@@ -120,7 +119,7 @@ PUBLIC int do_open()
 				  &driver_msg);
 		}
 		else if (imode == I_DIRECTORY) {
-			// assert(pin->i_num == ROOT_INODE);
+			assert(pin->i_num == ROOT_INODE);
 		}
 		else {
 			assert(pin->i_mode == I_REGULAR);
@@ -131,29 +130,6 @@ PUBLIC int do_open()
 	}
 
 	return fd;
-}
-
-PUBLIC int do_mkdir()
-{
-	char pathname[MAX_PATH];
-
-	/* get parameters from the message */
-	int flags = fs_msg.FLAGS;	/* access mode */
-	int name_len = fs_msg.NAME_LEN;	/* length of filename */
-	int src = fs_msg.source;	/* caller proc nr. */
-	assert(name_len < MAX_PATH);
-
-	phys_copy((void*)va2la(TASK_FS, pathname),
-		  (void*)va2la(src, fs_msg.PATHNAME),
-		  name_len);
-	pathname[name_len] = 0;
-
-	struct inode* ino = create_dir(pathname, flags);
-	if (!ino) {
-		return -1;
-	}
-
-	return 0;
 }
 
 /*****************************************************************************
@@ -181,25 +157,7 @@ PRIVATE struct inode * create_file(char * path, int flags)
 	int free_sect_nr = alloc_smap_bit(dir_inode->i_dev,
 					  NR_DEFAULT_FILE_SECTS);
 	struct inode *newino = new_inode(dir_inode->i_dev, inode_nr,
-					 free_sect_nr, I_REGULAR);
-
-	new_dir_entry(dir_inode, newino->i_num, filename);
-
-	return newino;
-}
-
-PRIVATE struct inode * create_dir(char * path, int flags)
-{
-	char filename[MAX_PATH];
-	struct inode * dir_inode;
-	if (strip_path(filename, path, &dir_inode) != 0)
-		return 0;
-
-	int inode_nr = alloc_imap_bit(dir_inode->i_dev);
-	int free_sect_nr = alloc_smap_bit(dir_inode->i_dev,
-					  NR_DEFAULT_FILE_SECTS);
-	struct inode *newino = new_inode(dir_inode->i_dev, inode_nr,
-					 free_sect_nr, I_DIRECTORY);
+					 free_sect_nr);
 
 	new_dir_entry(dir_inode, newino->i_num, filename);
 	// need to test
@@ -381,11 +339,11 @@ PRIVATE int alloc_smap_bit(int dev, int nr_sects_to_alloc)
  * 
  * @return  Ptr of the new i-node.
  *****************************************************************************/
-PRIVATE struct inode * new_inode(int dev, int inode_nr, int start_sect, int i_mode)
+PRIVATE struct inode * new_inode(int dev, int inode_nr, int start_sect)
 {
 	struct inode * new_inode = get_inode(dev, inode_nr);
 
-	new_inode->i_mode = i_mode;
+	new_inode->i_mode = I_REGULAR;
 	new_inode->i_size = 0;
 	new_inode->i_start_sect = start_sect;
 	new_inode->i_nr_sects = NR_DEFAULT_FILE_SECTS;

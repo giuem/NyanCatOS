@@ -71,9 +71,6 @@ PUBLIC void task_fs()
 		case EXIT:
 			fs_msg.RETVAL = fs_exit();
 			break;
-		case MKDIR:
-			fs_msg.RETVAL = do_mkdir();
-			break;
 		/* case LSEEK: */
 		/* 	fs_msg.OFFSET = do_lseek(); */
 		/* 	break; */
@@ -94,7 +91,6 @@ PUBLIC void task_fs()
 		msg_name[WRITE]  = "WRITE";
 		msg_name[LSEEK]  = "LSEEK";
 		msg_name[UNLINK] = "UNLINK";
-		msg_name[MKDIR] = "MKDIR";
 		/* msg_name[FORK]   = "FORK"; */
 		/* msg_name[EXIT]   = "EXIT"; */
 		/* msg_name[STAT]   = "STAT"; */
@@ -110,7 +106,6 @@ PUBLIC void task_fs()
 		case WRITE:
 		case FORK:
 		case EXIT:
-		case MKDIR:
 		/* case LSEEK: */
 		case STAT:
 			break;
