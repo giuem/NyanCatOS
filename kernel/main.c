@@ -232,8 +232,15 @@ void clear() {
 	// console_table[current_console].cursor = console_table[current_console].orig;
 }
 
-void test() {
-	mkdir("abc", O_RDWR);
+void ps() {
+	int i;
+	printf(" pid |   name   | pri | parent_pid\n");
+	for (i = 0; i < NR_TASKS + NR_PROCS; ++i) {
+		struct proc* p = &proc_table[i];
+		if (p->p_flags != FREE_SLOT) {
+			printf("%3d  %7s  %6d  %7d\n", i, p->name, p->priority, p->p_parent == NO_TASK ? 0 : p->p_parent);
+		}
+	}
 }
 
 /*****************************************************************************
@@ -253,7 +260,7 @@ void shabby_shell(const char * tty_name)
 
 	char rdbuf[128];
 	clear();
-	test();
+
 	while (1) {
 		write(1, "$ ", 2);
 		int r = read(0, rdbuf, 70);
@@ -313,6 +320,9 @@ void shabby_shell(const char * tty_name)
 int buildin_command(char **argv) {
 	if (!strcmp(argv[0], "clear")) {
 		clear();
+		return 1;
+	} else if (!strcmp(argv[0], "ps")) {
+		ps();
 		return 1;
 	}
 	return 0;
