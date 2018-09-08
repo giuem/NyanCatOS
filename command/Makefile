@@ -12,7 +12,7 @@ CFLAGS		= -I ../include/ -c -fno-builtin -fno-stack-protector -Wall
 LDFLAGS		= -Ttext 0x1000
 DASMFLAGS	= -D
 LIB		= ../lib/orangescrt.a
-BIN		= echo pwd touch edit cat ls rm date
+BIN		= echo pwd touch edit cat ls rm date mv
 
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all install
@@ -87,4 +87,10 @@ date.o: date.c ../include/type.h ../include/stdio.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 date: date.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+mv.o: mv.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+mv: mv.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?
