@@ -4,13 +4,18 @@
 
 int main(int argc, char const *argv[])
 {
-    const char *filename = ".";
+    char *filename;
+    if (argc > 1 && argv[1]) {
+        filename = argv[1];
+    } else {
+        filename = ".";
+    }
     int fd = open(filename, O_RDWR);
     struct stat st;
     struct dir_entry dirent;
     int i;
 
-    if (stat(".", &st) < 0)
+    if (stat(filename, &st) < 0)
     {
         printf("cannot stat %s\n", filename);
     }
