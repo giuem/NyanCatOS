@@ -80,6 +80,72 @@ PUBLIC int do_stat()
 	return 0;
 }
 
+PUBLIC int do_fstat()
+{
+	char filename[MAX_PATH];
+
+	int name_len = fs_msg.NAME_LEN;
+	assert(name_len < MAX_PATH);
+	int fd = fs_msg.FD;	/* length of filename */
+	int src = fs_msg.source;	/* caller proc nr. */
+
+	phys_copy((void*)va2la(TASK_FS, filename),    /* to   */
+		  (void*)va2la(src, fs_msg.PATHNAME), /* from */
+		  name_len);
+	filename[name_len] = 0;	
+
+	assert((pcaller->filp[fd] >= &f_desc_table[0]) &&
+	       (pcaller->filp[fd] < &f_desc_table[NR_FILE_DESC]));
+
+	struct inode * pin = pcaller->filp[fd]->fd_inode;
+
+	int inode_nr = search_inode(pin, filename);
+
+	if (inode_nr == 0) {
+		return -1; // not found
+	}
+	
+	pin = get_inode(pin->i_dev, inode_nr);
+
+	struct stat s;		/* the thing requested */
+	s.st_dev = pin->i_dev;
+	s.st_ino = pin->i_num;
+	s.st_mode= pin->i_mode;
+	s.st_rdev= is_special(pin->i_mode) ? pin->i_start_sect : NO_DEV;
+	s.st_size= pin->i_size;
+
+	put_inode(pin);
+
+	phys_copy((void*)va2la(src, fs_msg.BUF), /* to   */
+		  (void*)va2la(TASK_FS, &s),	 /* from */
+		  sizeof(struct stat));
+
+	return 0;
+}
+
+PUBLIC int search_inode(const struct inode * parent, const char * filename) {
+	int dir_blk0_nr = parent->i_start_sect;
+	int nr_dir_blks = (parent->i_size + SECTOR_SIZE - 1) / SECTOR_SIZE;
+	int nr_dir_entries = parent->i_size / DIR_ENTRY_SIZE;
+	int i, j;
+	int m = 0;
+	struct dir_entry * pde;
+	for (i = 0; i<nr_dir_blks; i++) {
+		RD_SECT(parent->i_dev, dir_blk0_nr + i);
+		pde = (struct dir_entry *)fsbuf;
+		for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE; j++,pde++) {
+			if (strcmp(filename, pde->name) == 0)
+				return pde->inode_nr;
+			if (++m > nr_dir_entries)
+				break;
+		}
+		if (m > nr_dir_entries) /* all entries have been iterated */
+			break;
+	}
+
+	return 0; // not found
+}
+
 /*****************************************************************************
  *                                search_file
  *****************************************************************************/
@@ -104,7 +170,7 @@ PUBLIC int search_file(char * path)
 
 	if (filename[0] == 0)	/* path: "/" */
 		return dir_inode->i_num;
-
+	// printl("filename: %s, inode: %d\n", filename, dir_inode->i_num);
 	/**
 	 * Search the dir for the file.
 	 */
@@ -119,9 +185,13 @@ PUBLIC int search_file(char * path)
 	int m = 0;
 	struct dir_entry * pde;
 	for (i = 0; i < nr_dir_blks; i++) {
+		// printl("1");
 		RD_SECT(dir_inode->i_dev, dir_blk0_nr + i);
 		pde = (struct dir_entry *)fsbuf;
+		// printl("2");
 		for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE; j++,pde++) {
+			// printl("3");
+			// printl("%s", pde->name);
 			if (memcmp(filename, pde->name, MAX_FILENAME_LEN) == 0)
 				return pde->inode_nr;
 			if (++m > nr_dir_entries)
