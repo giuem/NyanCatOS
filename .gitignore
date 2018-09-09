@@ -7,3 +7,7 @@
 *.map
 
 .vscode
+
+command/*
+!command/*.c
+!command/Makefile
