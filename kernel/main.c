@@ -342,8 +342,12 @@ void shabby_shell(const char * tty_name)
 	int fd_stdout = open(tty_name, O_RDWR);
 	assert(fd_stdout == 1);
 
-	char rdbuf[128];
 	clear();
+	boot_animation();
+	clear();
+	boot_banner();
+	char rdbuf[128];
+	//clear();
 
 	while (1) {
 		// show (username and) current directory
