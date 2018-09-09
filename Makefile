@@ -28,7 +28,7 @@ ORANGESBOOT	= boot/boot.bin boot/loader.bin
 ORANGESKERNEL	= kernel.bin
 LIB		= lib/orangescrt.a
 
-OBJS		= kernel/kernel.o kernel/start.o kernel/main.o\
+OBJS		= kernel/kernel.o kernel/start.o kernel/main.o kernel/boot_animation.o\
 			kernel/clock.o kernel/keyboard.o kernel/tty.o kernel/console.o\
 			kernel/i8259.o kernel/global.o kernel/protect.o kernel/proc.o\
 			kernel/systask.o kernel/hd.o\
@@ -98,6 +98,9 @@ kernel/start.o: kernel/start.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/main.o: kernel/main.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+kernel/boot_animation.o: kernel/boot_animation.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 kernel/clock.o: kernel/clock.c
