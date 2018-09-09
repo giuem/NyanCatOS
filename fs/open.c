@@ -148,6 +148,11 @@ PUBLIC int do_mkdir()
 		  name_len);
 	pathname[name_len] = 0;
 
+	int inode_nr = search_file(pathname);
+	if (inode_nr) {
+		return -1;
+	}
+
 	struct inode* ino = create_dir(pathname, flags);
 	if (!ino) {
 		return -1;
@@ -179,7 +184,7 @@ PRIVATE struct inode * create_file(char * path, int flags)
 
 	int inode_nr = alloc_imap_bit(dir_inode->i_dev);
 	int free_sect_nr = alloc_smap_bit(dir_inode->i_dev,
-					  NR_DEFAULT_FILE_SECTS);
+					  NR_DEFAULT_FILE_SECTS / 4); // 256k is enough for a dir
 	struct inode *newino = new_inode(dir_inode->i_dev, inode_nr,
 					 free_sect_nr, I_REGULAR);
 
