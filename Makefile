@@ -163,6 +163,9 @@ lib/close.o: lib/close.c
 lib/unlink.o: lib/unlink.c
 	$(CC) $(CFLAGS) -o $@ $<
 
+lib/mkdir.o: lib/mkdir.c
+	$(CC) $(CFLAGS) -o $@ $<
+
 lib/date.o: lib/date.c
 	$(CC) $(CFLAGS) -o $@ $<
 
