@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
     }
     int fd = open(argv[1], O_RDWR);
     if (fd == -1) {
-        printf("mv: %s not exists", argv[1]);
+        printf("cp: %s not exists", argv[1]);
         return -1;
     }
     char buf[1024];
