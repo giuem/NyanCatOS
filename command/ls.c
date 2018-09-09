@@ -18,6 +18,8 @@ int main(int argc, char const *argv[])
     if (stat(filename, &st) < 0)
     {
         printf("cannot stat %s\n", filename);
+        close(fd);
+        return -1;
     }
 
     const int cnt = st.st_size / DIR_ENTRY_SIZE;
@@ -30,8 +32,9 @@ int main(int argc, char const *argv[])
         for (i = 0; i < cnt; ++i) {
             read(fd, &dirent, sizeof(dirent));
             // printf("%2d %s \n", dirent.inode_nr, dirent.name);
-            if (stat(dirent.name, &st) < 0) {
+            if (fstat(fd, dirent.name, &st) < 0) {
                 printf("cannot stat %s\n", dirent.name);
+                continue;
             }
             printf("%3d %7d %s%s\n", dirent.inode_nr, st.st_size,
                     dirent.name, st.st_mode==I_DIRECTORY ? "/" : "");
