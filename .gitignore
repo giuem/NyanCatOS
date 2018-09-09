@@ -11,3 +11,4 @@
 command/*
 !command/*.c
 !command/Makefile
+!command/*.asm
