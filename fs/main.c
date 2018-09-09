@@ -77,6 +77,9 @@ PUBLIC void task_fs()
 		case STAT:
 			fs_msg.RETVAL = do_stat();
 			break;
+		case FSTAT:
+			fs_msg.RETVAL = do_fstat();
+			break;
 		default:
 			dump_msg("FS::unknown message:", &fs_msg);
 			assert(0);
@@ -108,6 +111,7 @@ PUBLIC void task_fs()
 		case EXIT:
 		/* case LSEEK: */
 		case STAT:
+		case FSTAT:
 			break;
 		case RESUME_PROC:
 			break;

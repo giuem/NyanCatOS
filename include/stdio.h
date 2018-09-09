@@ -143,6 +143,9 @@ PUBLIC int	execv		(const char * path, char * argv[]);
 /* lib/stat.c */
 PUBLIC int	stat		(const char *path, struct stat *buf);
 
+/* lib/fstat.c */
+PUBLIC int	fstat		(int fd, const char *filename, struct stat *buf);
+
 /* lib/syslog.c */
 PUBLIC	int	syslog		(const char *fmt, ...);
 
