@@ -318,8 +318,8 @@ PRIVATE void mkfs()
 	memset(fsbuf, 0, SECTOR_SIZE);
 	struct inode * pi = (struct inode*)fsbuf;
 	pi->i_mode = I_DIRECTORY;
-	pi->i_size = DIR_ENTRY_SIZE * 5; /* 5 files:
-					  * `.',
+	pi->i_size = DIR_ENTRY_SIZE * 6; /* 5 files:
+					  * `.', `..'
 					  * `dev_tty0', `dev_tty1', `dev_tty2',
 					  * `cmd.tar'
 					  */
@@ -349,6 +349,10 @@ PRIVATE void mkfs()
 
 	pde->inode_nr = 1;
 	strcpy(pde->name, ".");
+
+	pde++;
+	pde->inode_nr = 1;
+	strcpy(pde->name, "..");
 
 	/* dir entries of `/dev_tty0~2' */
 	for (i = 0; i < NR_CONSOLES; i++) {
