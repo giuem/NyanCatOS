@@ -12,7 +12,7 @@ CFLAGS		= -I ../include/ -c -fno-builtin -fno-stack-protector -Wall
 LDFLAGS		= -Ttext 0x1000
 DASMFLAGS	= -D
 LIB		= ../lib/orangescrt.a
-BIN		= echo pwd touch edit cat ls rm date mv cp
+BIN		= echo pwd touch edit cat ls rm date mv cp game_2048
 
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all install
@@ -99,4 +99,10 @@ cp.o: cp.c ../include/type.h ../include/stdio.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 cp: cp.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+game_2048.o: game_2048.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+game_2048: game_2048.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?

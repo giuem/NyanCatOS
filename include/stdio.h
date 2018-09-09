@@ -152,4 +152,7 @@ PUBLIC	int	syslog		(const char *fmt, ...);
 /* lib/date.c */
 PUBLIC int date(struct time * t);
 
+PUBLIC void srand(unsigned int seed);
+PUBLIC int rand();
+
 #endif /* _ORANGES_STDIO_H_ */
