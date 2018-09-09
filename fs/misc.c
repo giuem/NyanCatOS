@@ -167,7 +167,7 @@ PUBLIC int search_file(char * path)
 	struct inode * dir_inode;
 	if (strip_path(filename, path, &dir_inode) != 0)
 		return 0;
-	printl("search_file %s %d\n", filename, dir_inode->i_num);
+	// printl("search_file %s %d\n", filename, dir_inode->i_num);
 	if (filename[0] == 0)	/* path: "/" */
 		return dir_inode->i_num;
 	// printl("filename: %s, inode: %d\n", filename, dir_inode->i_num);

@@ -17,6 +17,9 @@
 #include "global.h"
 #include "proto.h"
 
+// global variables
+char current_dir[64] = "/";
+
 
 /*****************************************************************************
  *                               kernel_main
@@ -243,6 +246,87 @@ void ps() {
 	}
 }
 
+
+/**
+ * Built-in command: change directory.
+ * TODO: 
+ * 	1.check length;
+ * 	2.more complicated grammar	
+ *****************************************************************************/
+int cd(char * path){
+	
+	// null check
+	if(strlen(path) == 0){
+		return 1;
+	}
+
+	char next_current_dir[64];
+	for(int i = 0; i < 64; i++){
+		next_current_dir[i] = 0;
+	}
+	next_current_dir[0] = '/';
+
+	// update current folder
+	// slash, absolute path
+	if(path[0] == '/'){
+		strcpy(next_current_dir,path);
+	}
+	// dot
+	else if(path[0] == '.'){
+		// current folder
+		if(strlen(path) > 2 && path[1] == '/'){
+			char * p = path;
+			p += 2;
+
+			strcpy(next_current_dir, current_dir);
+			strcat(next_current_dir, p);
+		}
+		// parent folder
+		else if(path[1] == '.' && (strlen(path) == 2 || path[2] == '/')){
+			// find last slash except the one at the last
+			int cut_pos = 0;
+			strcpy(next_current_dir, current_dir);
+			for(int i = strlen(next_current_dir) - 2;i >= 0; i--){
+				if(next_current_dir[i] == '/'){
+					cut_pos = i;
+					break;
+				}
+			}
+
+			// cut
+			for(int i = cut_pos + 1; i < 64; i++){
+				next_current_dir[i] = 0;
+			}
+
+			// catenate
+			if(strlen(path) > 3){
+				char * p = path;
+				p += 3;
+				strcat(next_current_dir,p);
+			}
+		}
+	}
+	// current folder
+	else{
+		strcpy(next_current_dir, current_dir);
+		strcat(next_current_dir,path);
+	}
+
+	if(next_current_dir[strlen(next_current_dir) - 1] != '/'){
+		next_current_dir[strlen(next_current_dir)] = '/';
+	}
+
+	int fd = open(next_current_dir, O_RDWR);
+
+	if(fd == -1){
+		printf("Cannot find directory.\n");
+	}
+	else{
+		close(fd);
+		strcpy(current_dir, next_current_dir);
+	}
+}
+
 /*****************************************************************************
  *                                shabby_shell
  *****************************************************************************/
@@ -262,7 +346,13 @@ void shabby_shell(const char * tty_name)
 	clear();
 
 	while (1) {
-		write(1, "$ ", 2);
+		// show (username and) current directory
+		char message[128] = "";
+		strcat(message," : ");
+		strcat(message,current_dir);
+		strcat(message," $ ");
+
+		write(1, message, strlen(message));
 		int r = read(0, rdbuf, 70);
 		rdbuf[r] = 0;
 
@@ -323,6 +413,9 @@ int buildin_command(char **argv) {
 		return 1;
 	} else if (!strcmp(argv[0], "ps")) {
 		ps();
+		return 1;
+	} else if(!strcmp(argv[0], "cd")) {
+		cd(argv[1]);
 		return 1;
 	}
 	return 0;
@@ -389,7 +482,7 @@ void TestB()
 }
 
 /*======================================================================*
-                               TestB
+                               TestC
  *======================================================================*/
 void TestC()
 {
