@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
     if (fd == -1)
     {
         printf("fail to open %s\n", filename);
-        return 1;
+        return -1;
     }
 
     const int len = 128;

@@ -11,6 +11,10 @@ int main(int argc, char const *argv[])
         filename = ".";
     }
     int fd = open(filename, O_RDWR);
+    if (fd == -1) {
+        printf("fail to ls %s\n", filename);
+        return -1;
+    }
     struct stat st;
     struct dir_entry dirent;
     int i;
@@ -36,9 +40,10 @@ int main(int argc, char const *argv[])
                 printf("cannot stat %s\n", dirent.name);
                 continue;
             }
-            if (dirent.inode_nr > 0)
+            if (dirent.inode_nr > 0) {
                 printf("%3d %7d %s%s\n", dirent.inode_nr, st.st_size,
                     dirent.name, st.st_mode==I_DIRECTORY ? "/" : "");
+            }
         }
         break;
     default:
