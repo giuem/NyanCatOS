@@ -16,7 +16,7 @@ int is_file(const char * filename) {
 int main(int argc, char const *argv[])
 {
     if (argc != 3) {
-        printf("Usage: mv SOURCE DEST");
+        printf("Usage: cp SOURCE DEST\n");
         return -1;
     }
 
@@ -25,10 +25,10 @@ int main(int argc, char const *argv[])
         return -1;
     }
 
-    if (!is_file(argv[2])) {
-        printf("cp: %s is not a file\n", argv[2]);
-        return -1;
-    }
+    // if (!is_file(argv[2])) {
+    //     printf("cp: %s is not a file\n", argv[2]);
+    //     return -1;
+    // }
 
     int fd = open(argv[1], O_RDWR);
     if (fd == -1) {
