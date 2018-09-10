@@ -24,6 +24,57 @@
 #include "hd.h"
 #include "fs.h"
 
+PRIVATE int search_inode(const struct inode * parent, const char * filename);
+
+PUBLIC int do_chdir() {
+	int src = fs_msg.source;
+	if (src == TASK_MM) {
+		struct proc * p = &proc_table[fs_msg.PROC_NR];
+
+		assert(0 != p->cwd);
+		assert(0);
+	}
+	char filename[MAX_PATH];
+	char pathname[MAX_PATH];
+	int name_len = fs_msg.NAME_LEN;
+	phys_copy((void*)va2la(TASK_FS, pathname),    /* to   */
+		  (void*)va2la(src, fs_msg.PATHNAME), /* from */
+		  name_len);
+	pathname[name_len] = 0;
+
+	struct proc * p = &proc_table[src];
+	if (!p->cwd) {
+		p->cwd = root_inode;
+		p->cwd->i_cnt++;
+	}
+	// printl("src%d\n", src);
+	assert (p->cwd != 0);
+	struct inode * dir_inode;
+	if (strip_path(filename, pathname, &dir_inode) != 0) {
+		// not found
+		return -1;
+	}
+	assert(dir_inode != 0);
+
+	int inode_nr = search_inode(dir_inode, filename);
+	dir_inode = get_inode(dir_inode->i_dev, inode_nr);
+
+	if (dir_inode == INVALID_INODE) {
+		// not found
+		return -1;
+	}
+
+	if (dir_inode->i_mode != I_DIRECTORY) {
+		printl("{do_chdir} path is not directory");
+		return -1;
+	}
+	put_inode(p->cwd);
+	p->cwd = dir_inode;
+	// printl("%d %d\n", p->cwd->i_num, p->cwd->i_cnt);
+
+	return 0;
+}
+
 /*****************************************************************************
  *                                do_stat
  *************************************************************************//**
@@ -123,7 +174,7 @@ PUBLIC int do_fstat()
 	return 0;
 }
 
-PUBLIC int search_inode(const struct inode * parent, const char * filename) {
+PRIVATE int search_inode(const struct inode * parent, const char * filename) {
 	int dir_blk0_nr = parent->i_start_sect;
 	int nr_dir_blks = (parent->i_size + SECTOR_SIZE - 1) / SECTOR_SIZE;
 	int nr_dir_entries = parent->i_size / DIR_ENTRY_SIZE;
@@ -245,13 +296,19 @@ PUBLIC int strip_path(char * filename, const char * pathname,
 	if (s == 0)
 		return -1;
 
-	if (*s == '/')
-		s++;
+	struct proc * p = &proc_table[fs_msg.source];
 
 	struct inode *pinode_now = root_inode, *ptemp;
 	struct dir_entry * pde;
 	int dir_blk0_nr, nr_dir_blks, nr_dir_entries, m;
 	int i, j;
+
+	if (*s == '/') { // root
+		s++;
+	} else {
+		assert(p->cwd != 0);
+		pinode_now = p->cwd;
+	}
 
 	while (*s) {		/* check each character */
 		if (*s == '/') {

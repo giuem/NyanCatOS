@@ -123,6 +123,12 @@ PUBLIC int	write		(int fd, const void *buf, int count);
 /* lib/unlink.c */
 PUBLIC	int	unlink		(const char *pathname);
 
+/* lib/chdir.c */
+PUBLIC int chdir		(const char * path);
+
+/* lib/getpwd.c */
+PUBLIC int getpwd		(char * path, int size);
+
 /* lib/getpid.c */
 PUBLIC int	getpid		();
 

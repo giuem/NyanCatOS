@@ -3,6 +3,8 @@
 
 int main(int argc, char * argv[])
 {
-	printf("/\n");
+	char pwd[128];
+	getpwd(pwd, 128);
+	printf("%s\n", pwd);
 	return 0;
 }
