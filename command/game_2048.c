@@ -1,6 +1,7 @@
 #include "stdio.h"
 
 void help() {
+    print_clear();
     printf("**************************************\n");
     printf("*            2048  Game              *\n");
     printf("**************************************\n");
@@ -8,8 +9,6 @@ void help() {
     printf("*           left/up/down/right;      *\n");
     printf("*      2. Enter q to quit            *\n");
     printf("**************************************\n");
-    int i;
-    for(i = 0; i< 4; ++i) printf("\n");
 }
 
 int main(int argc, char const *argv[])
@@ -31,22 +30,27 @@ int main(int argc, char const *argv[])
 
             if (strcmp(keys, "a") == 0)
             {
+                help();
                 state = mat_left(mat);
             }
             else if (strcmp(keys, "s") == 0)
             {
+                help();
                 state=mat_down(mat);
             }
             else if (strcmp(keys, "w") == 0)
             {
+                help();
                 state=mat_up(mat);
             }
             else if (strcmp(keys, "d") == 0)
             {
+                help();
                 state=mat_right(mat);
             }
             else if (strcmp(keys, "q") == 0)
             {
+                print_clear();
                 return 0;
             }
             else
@@ -92,8 +96,6 @@ int mat_init(int *mat)
 }
 
 int mat_left(int *mat){
-    printf("Left\n");
-
     int i,j;
     int flag=0;
     int k=0,temp[4]={0},last=0;
@@ -126,8 +128,6 @@ int mat_left(int *mat){
 }
 
 int mat_right(int *mat){
-    printf("Right\n");
-
     int i,j;
     int flag=0;
     int k=0,temp[4]={0},last=0;
@@ -160,8 +160,6 @@ int mat_right(int *mat){
 }
 
 int mat_up(int *mat){
-    printf("Up\n");
-
     int i,j;
     int flag=0;
 
@@ -195,8 +193,6 @@ int mat_up(int *mat){
 }
 
 int mat_down(int *mat){
-    printf("Down\n");
-
     int i,j;
     int flag=0;
     int k=0,temp[4]={0},last=0;
@@ -266,3 +262,7 @@ void mat_print(int *mat){
     }
 }
 
+void print_clear() {
+    int i;
+    for (i = 0; i < 25; ++i) printf("\n");
+}
