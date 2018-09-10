@@ -18,7 +18,7 @@
 #include "proto.h"
 
 // global variables
-char current_dir[64] = "/";
+// char current_dir[64] = "/";
 
 
 /*****************************************************************************
@@ -254,77 +254,79 @@ void ps() {
  * 	2.more complicated grammar	
  *****************************************************************************/
 int cd(char * path){
-	
-	// null check
-	if(strlen(path) == 0){
-		return 1;
+	if (chdir(path) != 0) {
+		printf("cd: No such file or directory!\n");
 	}
+	// // null check
+	// if(strlen(path) == 0){
+	// 	return 1;
+	// }
 
-	char next_current_dir[64];
-	for(int i = 0; i < 64; i++){
-		next_current_dir[i] = 0;
-	}
-	next_current_dir[0] = '/';
+	// char next_current_dir[64];
+	// for(int i = 0; i < 64; i++){
+	// 	next_current_dir[i] = 0;
+	// }
+	// next_current_dir[0] = '/';
 
-	// update current folder
-	// slash, absolute path
-	if(path[0] == '/'){
-		strcpy(next_current_dir,path);
-	}
-	// dot
-	else if(path[0] == '.'){
-		// current folder
-		if(strlen(path) > 2 && path[1] == '/'){
-			char * p = path;
-			p += 2;
+	// // update current folder
+	// // slash, absolute path
+	// if(path[0] == '/'){
+	// 	strcpy(next_current_dir,path);
+	// }
+	// // dot
+	// else if(path[0] == '.'){
+	// 	// current folder
+	// 	if(strlen(path) > 2 && path[1] == '/'){
+	// 		char * p = path;
+	// 		p += 2;
 
-			strcpy(next_current_dir, current_dir);
-			strcat(next_current_dir, p);
-		}
-		// parent folder
-		else if(path[1] == '.' && (strlen(path) == 2 || path[2] == '/')){
-			// find last slash except the one at the last
-			int cut_pos = 0;
-			strcpy(next_current_dir, current_dir);
-			for(int i = strlen(next_current_dir) - 2;i >= 0; i--){
-				if(next_current_dir[i] == '/'){
-					cut_pos = i;
-					break;
-				}
-			}
+	// 		strcpy(next_current_dir, current_dir);
+	// 		strcat(next_current_dir, p);
+	// 	}
+	// 	// parent folder
+	// 	else if(path[1] == '.' && (strlen(path) == 2 || path[2] == '/')){
+	// 		// find last slash except the one at the last
+	// 		int cut_pos = 0;
+	// 		strcpy(next_current_dir, current_dir);
+	// 		for(int i = strlen(next_current_dir) - 2;i >= 0; i--){
+	// 			if(next_current_dir[i] == '/'){
+	// 				cut_pos = i;
+	// 				break;
+	// 			}
+	// 		}
 
-			// cut
-			for(int i = cut_pos + 1; i < 64; i++){
-				next_current_dir[i] = 0;
-			}
+	// 		// cut
+	// 		for(int i = cut_pos + 1; i < 64; i++){
+	// 			next_current_dir[i] = 0;
+	// 		}
 
-			// catenate
-			if(strlen(path) > 3){
-				char * p = path;
-				p += 3;
-				strcat(next_current_dir,p);
-			}
-		}
-	}
-	// current folder
-	else{
-		strcpy(next_current_dir, current_dir);
-		strcat(next_current_dir,path);
-	}
+	// 		// catenate
+	// 		if(strlen(path) > 3){
+	// 			char * p = path;
+	// 			p += 3;
+	// 			strcat(next_current_dir,p);
+	// 		}
+	// 	}
+	// }
+	// // current folder
+	// else{
+	// 	strcpy(next_current_dir, current_dir);
+	// 	strcat(next_current_dir,path);
+	// }
 
-	if(next_current_dir[strlen(next_current_dir) - 1] != '/'){
-		next_current_dir[strlen(next_current_dir)] = '/';
-	}
+	// if(next_current_dir[strlen(next_current_dir) - 1] != '/'){
+	// 	next_current_dir[strlen(next_current_dir)] = '/';
+	// }
 
-	int fd = open(next_current_dir, O_RDWR);
+	// int fd = open(next_current_dir, O_RDWR);
 
-	if(fd == -1){
-		printf("Cannot find directory.\n");
-	}
-	else{
-		close(fd);
-		strcpy(current_dir, next_current_dir);
-	}
+	// if(fd == -1){
+	// 	printf("Cannot find directory.\n");
+	// }
+	// else{
+	// 	close(fd);
+	// 	strcpy(current_dir, next_current_dir);
+	// }
 }
 
 /*****************************************************************************
@@ -344,18 +346,16 @@ void shabby_shell(const char * tty_name)
 
 	char rdbuf[128];
 	clear();
-	char t[10];
-	mkdir("a");
-	chdir("a");
+	char path[128];
 
 	while (1) {
+		getpwd(path, 128);
 		// show (username and) current directory
 		char message[128] = "";
 		strcat(message," : ");
-		strcat(message,current_dir);
+		strcat(message, path);
 		strcat(message," $ ");
-	getpwd(t, 10);
-
+	
 		write(1, message, strlen(message));
 		int r = read(0, rdbuf, 70);
 		rdbuf[r] = 0;

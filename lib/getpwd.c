@@ -192,6 +192,6 @@ PUBLIC int getpwd(char *path, int size)
 		//move string to the start of path
 		strcpy(path, p);
 	}
-    printl("%s\n", path);
+    // printl("%s\n", path);
 	return 0;
 }
