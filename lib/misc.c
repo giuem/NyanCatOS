@@ -152,6 +152,13 @@ PUBLIC char * strcat(char * s1, const char *s2)
 	return s1;
 }
 
+PUBLIC char * strchr(const char * s, int c) {
+	while (*s != (char)c)
+		if (!*s++)
+			return 0;
+	return (char *)s;
+}
+
 /*****************************************************************************
  *                                spin
  *****************************************************************************/
