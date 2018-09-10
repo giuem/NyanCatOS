@@ -184,7 +184,7 @@ PRIVATE int search_inode(const struct inode * parent, const char * filename) {
 	for (i = 0; i<nr_dir_blks; i++) {
 		RD_SECT(parent->i_dev, dir_blk0_nr + i);
 		pde = (struct dir_entry *)fsbuf;
-		for (j = 0; j < nr_dir_entries; j++,pde++) {
+		for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE && j < nr_dir_entries; j++,pde++) {
 			if (strcmp(filename, pde->name) == 0)
 				return pde->inode_nr;
 			if (++m > nr_dir_entries)
@@ -322,7 +322,7 @@ PUBLIC int strip_path(char * filename, const char * pathname,
             for (i = 0; i < nr_dir_blks && flag==0; i++) {
                 RD_SECT(pinode_now->i_dev, dir_blk0_nr + i);
                 pde = (struct dir_entry *)fsbuf;
-                for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE; j++,pde++) {
+                for (j = 0; j < SECTOR_SIZE / DIR_ENTRY_SIZE && j < nr_dir_entries; j++,pde++) {
                     //printl("pde->name:%s\n", pde->name);
                     if (strcmp(filename, pde->name) == 0){
                         ptemp = get_inode(pinode_now->i_dev, pde->inode_nr);

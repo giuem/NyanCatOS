@@ -205,13 +205,20 @@ void untar(const char * filename)
 			f_len = (f_len * 8) + (*p++ - '0'); /* octal */
 
 		int bytes_left = f_len;
-		int fdout = open(phdr->name, O_CREAT | O_RDWR);
+		char bin[64] = "/bin/";
+		if (!strcmp("kernel.bin", phdr->name)) {
+			strcpy(bin, phdr->name);
+		} else {
+			strcat(bin, phdr->name);
+		}
+
+		int fdout = open(bin, O_CREAT | O_RDWR);
 		if (fdout == -1) {
-			printf("    failed to extract file: %s\n", phdr->name);
+			printf("    failed to extract file: %s\n", bin);
 			printf(" aborted]");
 			return;
 		}
-		printf("    %s (%d bytes)\n", phdr->name, f_len);
+		printf("    %s (%d bytes)\n", bin, f_len);
 		while (bytes_left) {
 			int iobytes = min(chunk, bytes_left);
 			read(fd, buf,
@@ -344,9 +351,9 @@ void shabby_shell(const char * tty_name)
 	int fd_stdout = open(tty_name, O_RDWR);
 	assert(fd_stdout == 1);
 
-	boot_animation();
+	// boot_animation();
 	clear();
-	boot_banner();
+	// boot_banner();
 	char rdbuf[128];
 	char path[128];
 
@@ -354,9 +361,9 @@ void shabby_shell(const char * tty_name)
 		getpwd(path, 128);
 		// show (username and) current directory
 		char message[128] = "";
-		strcat(message," : ");
+		strcat(message, "root@NyanCatOS: ");
 		strcat(message, path);
-		strcat(message," $ ");
+		strcat(message, " $ ");
 	
 		write(1, message, strlen(message));
 		int r = read(0, rdbuf, 70);
@@ -387,7 +394,9 @@ void shabby_shell(const char * tty_name)
 			continue;
 		}
 
-		int fd = open(argv[0], O_RDWR);
+		char bin[128] = "/bin/";
+		strcat(bin, argv[0]);
+		int fd = open(bin, O_RDWR);
 		if (fd == -1) {
 			printl("Command not found!\n");
 			// if (rdbuf[0]) {
@@ -404,7 +413,7 @@ void shabby_shell(const char * tty_name)
 				wait(&s);
 			}
 			else {	/* child */
-				execv(argv[0], argv);
+				execv(bin, argv);
 			}
 		}
 	}
@@ -440,6 +449,8 @@ void Init()
 	assert(fd_stdin  == 0);
 	int fd_stdout = open("/dev_tty0", O_RDWR);
 	assert(fd_stdout == 1);
+
+	mkdir("/bin");
 
 	/* extract `cmd.tar' */
 	untar("/cmd.tar");
