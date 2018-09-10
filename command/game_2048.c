@@ -8,6 +8,8 @@ void help() {
     printf("*           left/up/down/right;      *\n");
     printf("*      2. Enter q to quit            *\n");
     printf("**************************************\n");
+    int i;
+    for(i = 0; i< 4; ++i) printf("\n");
 }
 
 int main(int argc, char const *argv[])

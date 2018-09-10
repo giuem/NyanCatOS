@@ -37,7 +37,7 @@ int main(int argc, char const *argv[])
             read(fd, &dirent, sizeof(dirent));
             if (dirent.name[0] == '.') {
                 // hidden file
-                continue;
+                // continue;
             }
             // printf("%2d %s \n", dirent.inode_nr, dirent.name);
             if (fstat(fd, dirent.name, &st) < 0) {
