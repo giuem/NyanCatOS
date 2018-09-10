@@ -351,9 +351,9 @@ void shabby_shell(const char * tty_name)
 	int fd_stdout = open(tty_name, O_RDWR);
 	assert(fd_stdout == 1);
 
-	// boot_animation();
+	boot_animation();
 	clear();
-	// boot_banner();
+	boot_banner();
 	char rdbuf[128];
 	char path[128];
 
