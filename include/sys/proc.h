@@ -68,6 +68,8 @@ struct proc {
 	int exit_status; /**< for parent */
 
 	struct file_desc * filp[NR_FILES];
+
+	struct inode * cwd;
 };
 
 struct task {

@@ -74,6 +74,9 @@ PUBLIC void task_fs()
 		case MKDIR:
 			fs_msg.RETVAL = do_mkdir();
 			break;
+		case CHDIR:
+			fs_msg.RETVAL = do_chdir();
+			break;
 		/* case LSEEK: */
 		/* 	fs_msg.OFFSET = do_lseek(); */
 		/* 	break; */
@@ -117,6 +120,7 @@ PUBLIC void task_fs()
 		/* case LSEEK: */
 		case STAT:
 		case FSTAT:
+		case CHDIR:
 			break;
 		case RESUME_PROC:
 			break;
@@ -174,6 +178,12 @@ PRIVATE void init_fs()
 	assert(sb->magic == MAGIC_V1);
 
 	root_inode = get_inode(ROOT_DEV, ROOT_INODE);
+
+	int index = 0;
+	for (i = 0; index < NR_TASKS + NR_PROCS; ++index) {
+		proc_table[index].cwd = root_inode;
+		proc_table[index].cwd->i_cnt ++;
+	}
 }
 
 /*****************************************************************************

@@ -344,6 +344,9 @@ void shabby_shell(const char * tty_name)
 
 	char rdbuf[128];
 	clear();
+	char t[10];
+	mkdir("a");
+	chdir("a");
 
 	while (1) {
 		// show (username and) current directory
@@ -351,6 +354,7 @@ void shabby_shell(const char * tty_name)
 		strcat(message," : ");
 		strcat(message,current_dir);
 		strcat(message," $ ");
+	getpwd(t, 10);
 
 		write(1, message, strlen(message));
 		int r = read(0, rdbuf, 70);
