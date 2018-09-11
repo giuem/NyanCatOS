@@ -78,7 +78,7 @@ int main(int argc, char const *argv[])
             }
             // printf("%2d %s \n", dirent.inode_nr, dirent.name);
             if (fstat(fd, dirent.name, &st) < 0) {
-                printf("cannot stat %s\n", dirent.name);
+                // printf("cannot stat %s\n", dirent.name);
                 continue;
             }
             if (dirent.inode_nr > 0) {

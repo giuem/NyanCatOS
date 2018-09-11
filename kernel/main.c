@@ -354,6 +354,7 @@ void shabby_shell(const char * tty_name)
 	boot_animation();
 	clear();
 	boot_banner();
+
 	char rdbuf[128];
 	char path[128];
 

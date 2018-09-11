@@ -184,7 +184,7 @@ PRIVATE struct inode * create_file(char * path, int flags)
 
 	int inode_nr = alloc_imap_bit(dir_inode->i_dev);
 	int free_sect_nr = alloc_smap_bit(dir_inode->i_dev,
-					  NR_DEFAULT_FILE_SECTS); // 256k is enough for a dir
+					  NR_DEFAULT_FILE_SECTS);
 	struct inode *newino = new_inode(dir_inode->i_dev, inode_nr,
 					 free_sect_nr, I_REGULAR);
 
@@ -202,7 +202,7 @@ PRIVATE struct inode * create_dir(char * path, int flags)
 
 	int inode_nr = alloc_imap_bit(dir_inode->i_dev);
 	int free_sect_nr = alloc_smap_bit(dir_inode->i_dev,
-					  NR_DEFAULT_FILE_SECTS / 4);
+					  NR_DEFAULT_FILE_SECTS);
 	struct inode *newino = new_inode(dir_inode->i_dev, inode_nr,
 					 free_sect_nr, I_DIRECTORY);
 
